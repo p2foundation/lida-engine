@@ -7,6 +7,7 @@ import { MerchantsModule } from './merchants/merchants.module';
 import { BillpaymentsModule } from './billpayments/billpayments.module';
 import { PayswitchModule } from './payswitch/payswitch.module';
 import { EtranzactModule } from './etranzact/etranzact.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { EtranzactModule } from './etranzact/etranzact.module';
     MerchantsModule, 
     BillpaymentsModule, 
     PayswitchModule, 
-    EtranzactModule
+    EtranzactModule, SmsModule
   ],
   controllers: [AppController],
   providers: [AppService],
