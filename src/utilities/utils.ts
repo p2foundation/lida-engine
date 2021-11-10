@@ -23,7 +23,7 @@ export function generateTransactionId() {
   const month = ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1);
   const year = date.getFullYear().toString().substr(2, 2);
   const customDate = '' + month + day + year;
-  for (let i = 0; i <6; i++) {
+  for (let i = 0; i <10; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   const transId = text + customDate;

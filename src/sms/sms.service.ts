@@ -17,10 +17,47 @@ export class SmsService {
     private httpService: HttpService
   ) { }
 
-  getSendSMS(): any {
+  public SendSMS(transDto: SmsDto): Observable<AxiosResponse<SmsDto>> {
+    const {
+      recipient,
+      message,
+      senderId,
+    } = transDto;
 
+    const s2Params = {
+      recipient: recipient || '',
+      message: message || '',
+      sender_id: senderId || '',
+      trxn: generateTransactionId() || ''
+    };
+
+    // https://tppgh.myone4all.com/api/TopUpApi/sms?recipient=0244588584&message=test%20sms&sender_id=covid19%20Alert&trxn=353452ewrtret;
+    // https://tppgh.myone4all.com/api/TopUpApi/sms?recipient=233244588584&message=Welcome! You have been successfully subscribed to the Lida Loyalty platform. &sender_id=Welcome! You have been successfully subscribed to the Lida Loyalty platform. &trxn=B4HN9GIFCD111021
+    const s2Url = `recipient=${s2Params.recipient}&message=${s2Params.message}&sender_id=${s2Params.sender_id}&trxn=${s2Params.trxn}`;
+
+    const configs: any = {
+      url: this.smsBaseUrl+`/TopUpApi/sms?`+s2Url,
+      headers: { ApiKey: API_KEY, ApiSecret: API_SECRET },
+      agent: new https.Agent({
+        rejectUnauthorized: false,
+      }),
+    };
+    this.logger.log(`Post BulkSMS payload ==> ${JSON.stringify(configs)}`);
+
+    return this.httpService.get(configs.url, { httpsAgent: configs.agent, headers: configs.headers })
+      .pipe(
+        map((pbsRes) => {
+          this.logger.verbose(`BulkSMS response ++++ ${JSON.stringify(pbsRes.data)}`);
+          return pbsRes.data;
+        }),
+        catchError((taError) => {
+          this.logger.error(`BulkSMS ERROR response ---- ${JSON.stringify(taError.data)}`);
+          return taError.data;
+        })
+      );
   }
-  postBulkSMS(transDto: SmsDto): Observable<AxiosResponse<SmsDto>> {
+
+  public postBulkSMS(transDto: SmsDto): Observable<AxiosResponse<SmsDto>> {
     const {
       recipient,
       message,
@@ -33,7 +70,6 @@ export class SmsService {
       sender_id: senderId || '',
       trxn: generateTransactionId() || ''
     };
-    const newTaParams = JSON.stringify(pbsParams);
 
     const configs: any = {
       url: this.smsBaseUrl + `/TopUpApi/sms`,
@@ -45,9 +81,9 @@ export class SmsService {
     };
     this.logger.log(`Post BulkSMS payload == ${JSON.stringify(configs)}`);
 
-    return this.httpService.post<any>(configs.url, configs.body, { httpsAgent: configs.agent, headers: configs.headers })
+    return this.httpService.post(configs.url, configs.body, { httpsAgent: configs.agent, headers: configs.headers })
       .pipe(
-        map(pbsRes => {
+        map((pbsRes) => {
           this.logger.verbose(`BulkSMS response ++++ ${JSON.stringify(pbsRes.data)}`);
           return pbsRes.data;
         }),
@@ -57,4 +93,5 @@ export class SmsService {
         })
       );
   }
+
 }

@@ -26,6 +26,8 @@ export class AirtimeService {
       trxn: transReference || ''
     };
 
+    // https://tppgh.myone4all.com/api/TopUpApi/transactionStatus?trxn=1KNRUW111021
+
     const tsUrl = this.AirBaseUrl + `/TopUpApi/transactionStatus?trxn=${payload.trxn}`
 
     const configs = {
@@ -55,13 +57,14 @@ export class AirtimeService {
       retailer,
       recipientMsisdn,
       amount,
-      channel
+      channel,
+      network
     } = transDto;
 
     const clientReference = generateTransactionId();
     const taParams = {
       retailer: retailer || RETAILER,
-      network: channel || 0,
+      network: network || 0,
       recipient: recipientMsisdn || '',
       amount: amount || '',
       trxn: clientReference || ''
