@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import { AirtimeService } from './airtime.service';
 import { TopupDto } from './dto/topup.dto';
 import { TransStatusDto } from './dto/transtatus.dto';
@@ -15,7 +15,7 @@ export class AirtimeController {
         return `Airtime topup processor started ...`;
     }
 
-    @Get('/transtatus')
+    @Post('/transtatus')
     public async queryTransactionstatus(
         @Body() qtsDto: TransStatusDto
     ): Promise<any> {
@@ -24,7 +24,7 @@ export class AirtimeController {
         return ts;
     }
 
-    @Get('/topup')
+    @Post('/topup')
     public async processTopup(
         @Body() ptDto: TopupDto
     ): Promise<any> {

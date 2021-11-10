@@ -1,4 +1,5 @@
 export class TransStatusDto {
-    clientReference: string;
+    transReference: string;
+    transId?: string;
 }
   
