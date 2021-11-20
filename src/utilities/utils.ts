@@ -1,10 +1,11 @@
 import { Logger } from '@nestjs/common';
+import { PAYSWITCH_APIKEY, PAYSWITCH_USERNAME } from 'src/constants';
 
 
 export function generateMerchantKey() {
   const logger = new Logger();
-  const merchantId = '';
-  const merchantToken = '';
+  const merchantId = PAYSWITCH_USERNAME;
+  const merchantToken = PAYSWITCH_APIKEY;
 
   const encodedAuth = '' + Buffer.from(merchantId + ':' + merchantToken).toString('base64');
   logger.log('encoded string toBase64 Auth ===>');

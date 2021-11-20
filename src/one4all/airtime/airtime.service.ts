@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { catchError, map } from 'rxjs/operators';
 import * as https from 'https';
-import { API_KEY, API_SECRET, ONE4ALL_BASEURL, RETAILER } from 'src/constants';
+import { ONE4ALL_APIKEY, ONE4ALL_APISECRET, ONE4ALL_BASEURL, ONE4ALL_RETAILER, } from 'src/constants';
 import { TransStatusDto } from './dto/transtatus.dto';
 import { TopupDto } from './dto/topup.dto';
 import { generateTransactionId } from 'src/utilities/utils';
@@ -32,7 +32,7 @@ export class AirtimeService {
 
     const configs = {
       url: tsUrl,
-      headers: { ApiKey: API_KEY, ApiSecret: API_SECRET },
+      headers: { ApiKey: ONE4ALL_APIKEY, ApiSecret: ONE4ALL_APISECRET },
       agent: new https.Agent({
         rejectUnauthorized: false,
       })
@@ -63,7 +63,7 @@ export class AirtimeService {
 
     const clientReference = generateTransactionId();
     const taParams = {
-      retailer: retailer || RETAILER,
+      retailer: retailer || ONE4ALL_RETAILER,
       network: network || 0,
       recipient: recipientMsisdn || '',
       amount: amount || '',
@@ -76,7 +76,7 @@ export class AirtimeService {
 
     const configs: any = {
       url: this.AirBaseUrl + taUrl,
-      headers: { ApiKey: API_KEY, ApiSecret: API_SECRET },
+      headers: { ApiKey: ONE4ALL_APIKEY, ApiSecret: ONE4ALL_APISECRET },
       agent: new https.Agent({
         rejectUnauthorized: false,
       }),

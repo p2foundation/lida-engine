@@ -2,11 +2,12 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import * as https from 'https';
-import { API_KEY, API_SECRET, ONE4ALL_BASEURL } from 'src/constants';
+import { ONE4ALL_APIKEY, ONE4ALL_APISECRET, ONE4ALL_BASEURL } from 'src/constants';
 import { ReceiveMoneyDto } from './dto/receive.money.dto';
 import { generateTransactionId } from 'src/utilities/utils';
+import { SendMoneyDto } from './dto/send.money.dto';
 
 @Injectable()
 export class MobilemoneyService {
@@ -17,8 +18,73 @@ export class MobilemoneyService {
         private httpService: HttpService
     ) { }
 
-    sendMobileMoney() {
-        return 'credit customer mobile money wallet';
+    // walletCallback(transDto: CallbackWalletDto): Observable<AxiosResponse<CallbackWalletDto>> {
+    //     const { Status, Transactionid, Message, MerchantReference } = transDto;
+    //     const data = { Status, Transactionid, Message, MerchantReference };
+    //     const payload = { data };
+
+    //     const configs = {
+    //         url: this.callbackUrl,
+    //         body: payload,
+    //     };
+    //     this.logger.log(`test post payload == ${JSON.stringify(configs)}`);
+    //     return this.httpService.post(configs.url, configs.body).pipe(
+    //         map(wcRes => {
+    //             this.logger.log(`service response STATUS ==  ${JSON.stringify(wcRes.data)}`);
+    //             return wcRes.data;
+    //         }),
+    //     );
+    // }
+
+    sendMobileMoney(transDto: SendMoneyDto): Observable<AxiosResponse<SendMoneyDto>> {
+        const {
+            clientReference,
+            customerMsisdn,
+            amount,
+        } = transDto;
+
+        const rm2Params = {
+            recipient: customerMsisdn || '',
+            amount: amount || '',
+            trxn: generateTransactionId() || '',
+        };
+        // https://tppgh.myone4all.com/api/TopUpApi/b2c?recipient=233245667942&amount=1&trxn=1234567890
+
+        const sm2Url = `/TopUpApi/b2c?recipient=${rm2Params.recipient}&amount=${rm2Params.amount}&trxn=${rm2Params.trxn}`;
+
+        const configs = {
+            url: this.momoBaseUrl + sm2Url,
+            headers: { ApiKey: ONE4ALL_APIKEY, ApiSecret: ONE4ALL_APISECRET },
+            agent: new https.Agent({
+                rejectUnauthorized: false,
+            }),
+        };
+        this.logger.log(`SEND MONEY payload config == ${JSON.stringify(configs)}`);
+        return this.httpService.get(configs.url, { httpsAgent: configs.agent, headers: configs.headers }).pipe(
+            map(Sm2Res => {
+                this.logger.verbose(`SEND MONEY server response => ${Sm2Res.data}`);
+                // if (res.data.Status === 0) {
+                //     this.logger.error(`debit wallet service response STATUS =  ${JSON.stringify(res.data.Status)}`);
+                //     this.logger.error(`service response MESSAGE =  ${JSON.stringify(res.data.Message)}`);
+                //     this.logger.error(`service response DETAILS = ${JSON.stringify(res.data.Details)}`);
+                // } else if (res.data.Status === 1) {
+                //     this.logger.debug(`debit wallet  service response TRANSACTION ID == ${JSON.stringify(res.data.Transactionid)}`);
+                //     this.logger.debug(`service response STATUS ==  ${JSON.stringify(res.data.Status)}`);
+                //     this.logger.debug(`response MESSAGE ==  ${JSON.stringify(res.data.Message)}`);
+                //     this.logger.debug(`response MERCHANT REFERENCE == ${JSON.stringify(res.data.MerchantReference)}`);
+                // } else if (res.data.Status === 2) {
+                //     this.logger.warn(`debit wallet service response STATUS =  ${JSON.stringify(res.data.Status)}`);
+                //     this.logger.warn(`service response MESSAGE =  ${JSON.stringify(res.data.Message)}`);
+                //     this.logger.warn(`service response TRANSACTIONID = ${JSON.stringify(res.data.transactionid)}`);
+                // }
+
+                return Sm2Res.data;
+            }),
+            catchError(Sm2Error => {
+                this.logger.error(`ERROR CREDIT WALLET => ${Sm2Error.data}`);
+                return Sm2Error.data;
+            }),
+        );
     }
 
     receiveMobileMoney(transDto: ReceiveMoneyDto): Observable<AxiosResponse<ReceiveMoneyDto>> {
@@ -39,15 +105,15 @@ export class MobilemoneyService {
 
         const configs = {
             url: this.momoBaseUrl + rm2Url,
-            headers: { ApiKey: API_KEY, ApiSecret: API_SECRET },
+            headers: { ApiKey: ONE4ALL_APIKEY, ApiSecret: ONE4ALL_APISECRET },
             agent: new https.Agent({
                 rejectUnauthorized: false,
             }),
         };
         this.logger.log(`RECEIVE MONEY payload config == ${JSON.stringify(configs)}`);
         return this.httpService.get(configs.url, { httpsAgent: configs.agent, headers: configs.headers }).pipe(
-            map(res => {
-                this.logger.verbose(`RECEIVE MONEY server response => ${res.data}`);
+            map(rm2Res => {
+                this.logger.verbose(`RECEIVE MONEY server response => ${rm2Res.data}`);
                 // if (res.data.Status === 0) {
                 //     this.logger.error(`debit wallet service response STATUS =  ${JSON.stringify(res.data.Status)}`);
                 //     this.logger.error(`service response MESSAGE =  ${JSON.stringify(res.data.Message)}`);
@@ -63,7 +129,11 @@ export class MobilemoneyService {
                 //     this.logger.warn(`service response TRANSACTIONID = ${JSON.stringify(res.data.transactionid)}`);
                 // }
 
-                return res.data;
+                return rm2Res.data;
+            }),
+            catchError(rm2Error => {
+                this.logger.error(`ERROR DEBIT WALLET => ${rm2Error.data}`);
+                return rm2Error.data;
             }),
         );
     }

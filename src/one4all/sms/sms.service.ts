@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { catchError, map } from 'rxjs/operators';
 import * as https from 'https';
-import { API_KEY, API_SECRET, ONE4ALL_BASEURL } from 'src/constants';
+import { ONE4ALL_APIKEY, ONE4ALL_APISECRET, ONE4ALL_BASEURL } from 'src/constants';
 import { generateTransactionId } from 'src/utilities/utils';
 import { SmsDto } from './dto/sms.dto';
 
@@ -37,7 +37,7 @@ export class SmsService {
 
     const configs: any = {
       url: this.smsBaseUrl+`/TopUpApi/sms?`+s2Url,
-      headers: { ApiKey: API_KEY, ApiSecret: API_SECRET },
+      headers: { ApiKey: ONE4ALL_APIKEY, ApiSecret: ONE4ALL_APISECRET },
       agent: new https.Agent({
         rejectUnauthorized: false,
       }),
@@ -74,7 +74,7 @@ export class SmsService {
     const configs: any = {
       url: this.smsBaseUrl + `/TopUpApi/sms`,
       body: pbsParams,
-      headers: { ApiKey: API_KEY, ApiSecret: API_SECRET },
+      headers: { ApiKey: ONE4ALL_APIKEY, ApiSecret: ONE4ALL_APISECRET },
       agent: new https.Agent({
         rejectUnauthorized: false,
       }),

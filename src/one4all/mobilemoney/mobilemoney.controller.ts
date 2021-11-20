@@ -1,5 +1,6 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ReceiveMoneyDto } from './dto/receive.money.dto';
+import { SendMoneyDto } from './dto/send.money.dto';
 import { MobilemoneyService } from './mobilemoney.service';
 
 @Controller('mobilemoney')
@@ -11,8 +12,11 @@ export class MobilemoneyController {
     ){ }
 
     @Post('send')
-    public async creditWallet(){
-        return 'send mobile money'
+    public async creditWallet(
+        @Body() transDto: SendMoneyDto
+    ){
+        const cw = await this.mobilemoneyService.sendMobileMoney(transDto);
+        return cw;
     }
 
     @Post('receive')
@@ -22,4 +26,5 @@ export class MobilemoneyController {
         const dw = await this.mobilemoneyService.receiveMobileMoney(transDto);
         return dw;
     }
+    
 }
