@@ -5,10 +5,11 @@ import { catchError, map } from 'rxjs/operators';
 import * as https from 'https';
 import { HttpService } from '@nestjs/axios';
 import { CardPaymentDto } from './dto/card.payments.dto';
-import { generateMerchantKey, generateTransactionId } from 'src/utilities/utils';
+import { generateMerchantKey } from 'src/utilities/utils';
 import { PAYSWITCH_APIKEY, PAYSWITCH_TEST_BASEURL, PAYSWITCH_USERNAME } from 'src/constants';
 import { CallbackDto } from './dto/callback.dto';
 import { InlinePayDto } from './dto/inline.pay.dto';
+import { psRandomGeneratedNumber } from 'src/utilities/ps.utils';
 
 @Injectable()
 export class PscardpaymentService {
@@ -41,7 +42,7 @@ export class PscardpaymentService {
 
     const ipParams: any = {
       merchant_id: merchantId || '',
-      transaction_id: transId,
+      transaction_id: psRandomGeneratedNumber(),
       desc: description,
       amount,
       redirect_url: redirectURL,

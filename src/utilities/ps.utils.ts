@@ -14,11 +14,11 @@ export function generateMerchantKey() {
   return encodedAuth;
 }
 
-export function generateTransactionId() {
+export function psRandomGeneratedNumber() {
   const logger = new Logger();
 
   let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const possible = '0123456789';
   const date = new Date();
   const day = (date.getDate() < 10 ? '0' : '') + date.getDate();
   const month = ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1);
@@ -28,6 +28,6 @@ export function generateTransactionId() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   const transId = text + customDate;
-  // logger.log('generated random transaction +++' + transId);
+  logger.log('generated random transaction +++ ' + transId);
   return transId;
 }

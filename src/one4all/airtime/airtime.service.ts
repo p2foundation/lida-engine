@@ -55,19 +55,18 @@ export class AirtimeService {
   topupAirtime(transDto: TopupDto): Observable<AxiosResponse<TopupDto>> {
     const {
       retailer,
-      recipientMsisdn,
+      recipientNumber,
       amount,
-      channel,
       network
     } = transDto;
 
-    const clientReference = generateTransactionId();
+    // const clientReference = generateTransactionId();
     const taParams = {
       retailer: retailer || ONE4ALL_RETAILER,
       network: network || 0,
-      recipient: recipientMsisdn || '',
+      recipient: recipientNumber || '',
       amount: amount || '',
-      trxn: clientReference || ''
+      trxn: generateTransactionId() || ''
     };
     const newTaParams = JSON.stringify(taParams);
     // https://tppgh.myone4all.com/api/TopUpApi/airtime?retailer=233241603241&recipient=233244588584&amount=1&network=0&trxn=1234567890
