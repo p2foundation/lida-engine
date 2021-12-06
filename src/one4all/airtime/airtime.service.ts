@@ -9,7 +9,6 @@ import { TransStatusDto } from './dto/transtatus.dto';
 import { TopupDto } from './dto/topup.dto';
 import { generateTransactionId } from 'src/utilities/utils';
 
-
 @Injectable()
 export class AirtimeService {
   private logger = new Logger('AirtimeService');
@@ -62,13 +61,13 @@ export class AirtimeService {
 
     // const clientReference = generateTransactionId();
     const taParams = {
-      retailer: retailer || ONE4ALL_RETAILER,
+      retailer: ONE4ALL_RETAILER || retailer,
       network: network || 0,
       recipient: recipientNumber || '',
       amount: amount || '',
       trxn: generateTransactionId() || ''
     };
-    const newTaParams = JSON.stringify(taParams);
+    // const newTaParams = JSON.stringify(taParams);
     // https://tppgh.myone4all.com/api/TopUpApi/airtime?retailer=233241603241&recipient=233244588584&amount=1&network=0&trxn=1234567890
 
     const taUrl = `/TopUpApi/airtime?retailer=${taParams.retailer}&recipient=${taParams.recipient}&amount=${taParams.amount}&network=${taParams.network}&trxn=${taParams.trxn}`;

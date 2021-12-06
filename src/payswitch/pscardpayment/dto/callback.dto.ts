@@ -1,12 +1,11 @@
 export class CallbackDto {
     status: string;
     code: any;
-    reason: string;
+    description: string;
     r_switch: string;
-    subscriber_number: string;
+    subscriberNumber: string;
     amount: any;
     channel: string;
     currency: string;
-    transaction_id: string
-
+    transactionId: string
 }

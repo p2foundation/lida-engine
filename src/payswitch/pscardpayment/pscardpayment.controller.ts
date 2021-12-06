@@ -6,27 +6,28 @@ import { PscardpaymentService } from "./pscardpayment.service";
 
 @Controller('pscardpayment')
 export class PscardpaymentController {
-    private logger = new Logger('PscardpaymentController');
+  private logger = new Logger('PscardpaymentController');
 
-    constructor(
-        private pscardpaymentService: PscardpaymentService
-    ) { }
+  constructor(
+    private pscardpaymentService: PscardpaymentService
+  ) { }
 
-    @Get('redirecturl')
-    public async primaryCallback(
-        @Res() res: Response,
-        @Query() qr: CallbackDto
-    ): Promise<any> {
-        const pc = await qr;
-        this.logger.log(`TRANSACTION RESPONSE URL => ${JSON.stringify(pc)}`);
-        res.status(HttpStatus.OK).json(pc);
-    }
+  @Get('redirecturl')
+  public async primaryCallback(
+    @Res() res: Response,
+    @Query() qr: CallbackDto
+  ): Promise<any> {
+    const pc = await qr;
+    this.logger.log(`TRANSACTION RESPONSE URL => ${JSON.stringify(pc)}`);
+    res.status(HttpStatus.OK).json(pc);
+  }
 
-    @Post('inline')
-    public async inlineCardMobilePayments(
-        @Body() transDto: InlinePayDto
-    ) {
-        const icmp = await this.pscardpaymentService.inlinePayments(transDto);
-        return icmp;
-    }
+  @Post('inline')
+  public async inlineCardMobilePayments(
+    @Body() transDto: InlinePayDto
+  ) {
+    this.logger.debug(`PAYMENT PAYLOAD => ${transDto}`);
+    const icmp = await this.pscardpaymentService.inlinePayments(transDto);
+    return icmp;
+  }
 }

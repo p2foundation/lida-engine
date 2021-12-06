@@ -6,7 +6,14 @@ import * as https from 'https';
 import { HttpService } from '@nestjs/axios';
 import { CardPaymentDto } from './dto/card.payments.dto';
 import { generateMerchantKey } from 'src/utilities/utils';
-import { PAYSWITCH_APIKEY, PAYSWITCH_TEST_BASEURL, PAYSWITCH_USERNAME } from 'src/constants';
+import {
+  PAYSWITCH_APIKEY_PROD,
+  PAYSWITCH_TEST_BASEURL,
+  PAYSWTICH_LIVE_BASEURL,
+  PAYSWITCH_USERNAME_PROD,
+  PAYSWITCH_MERCHANTID,
+  RESPONSE_URL
+} from 'src/constants';
 import { CallbackDto } from './dto/callback.dto';
 import { InlinePayDto } from './dto/inline.pay.dto';
 import { psRandomGeneratedNumber } from 'src/utilities/ps.utils';
@@ -20,12 +27,18 @@ export class PscardpaymentService {
   ) { }
 
   public psCallback(transDto: CallbackDto): Observable<AxiosResponse<CallbackDto>> {
-    const { status, transaction_id, reason, } = transDto;
-    // const payload = { data };
+    const { status, transactionId, description, amount } = transDto;
+
+    const psParam: any = {
+      status,
+      transaction_id: transactionId || '',
+      reason: description || '',
+      amount,
+    };
 
     const configs = {
       url: '',
-      body: 'payload',
+      body: psParam,
     };
     this.logger.log(`test post payload == ${JSON.stringify(configs)}`);
     return this.httpService.post(configs.url, configs.body).pipe(
@@ -38,64 +51,72 @@ export class PscardpaymentService {
 
 
   public inlinePayments(transDto: InlinePayDto): Observable<AxiosResponse<CardPaymentDto>> {
-    const { merchantId, transId, description, amount, redirectURL, customerEmail } = transDto;
+    const { merchantId, description, amount, redirectURL, customerEmail, transId } = transDto;
 
     const ipParams: any = {
-      merchant_id: merchantId || '',
-      transaction_id: psRandomGeneratedNumber(),
+      merchant_id: merchantId || PAYSWITCH_MERCHANTID,
+      transaction_id: psRandomGeneratedNumber() || transId,
       desc: description,
       amount,
-      redirect_url: redirectURL,
+      redirect_url: redirectURL || RESPONSE_URL,
       email: customerEmail,
     };
 
     const configs = {
-      url: 'https://test.theteller.net/checkout/initiate',
+      url: PAYSWTICH_LIVE_BASEURL + '/checkout/initiate',
       body: ipParams,
       auth: {
-        username: `${PAYSWITCH_USERNAME}`,
-        password: `${PAYSWITCH_APIKEY}`
+        username: `${PAYSWITCH_USERNAME_PROD}`,
+        password: `${PAYSWITCH_APIKEY_PROD}`
       },
       agent: new https.Agent({
         rejectUnauthorized: false,
       }),
     };
-    this.logger.log(`INLINE PAYMENT payload config == ${JSON.stringify(configs)}`);
-    return this.httpService.post(configs.url, configs.body, { httpsAgent: configs.agent, auth: configs.auth }).pipe(
-      map((tmRes) => {
-        this.logger.verbose(`INLINE PAYMENT server response => ${JSON.stringify(tmRes.data)}`);
 
-        return tmRes.data;
-      }),
-      catchError(ipError => {
-        this.logger.error(`ERROR INLINE PAYMENT => ${ipError.data}`);
-        return ipError.data;
-      }),
+    this.logger.log(`INLINE PAYMENT payload config == ${JSON.stringify(configs)}`);
+    return this.httpService
+      .post(configs.url, configs.body, { httpsAgent: configs.agent, auth: configs.auth }).pipe(
+        map((tmRes) => {
+          this.logger.verbose(`INLINE PAYMENT server response => ${JSON.stringify(tmRes.data)}`);
+          return tmRes.data;
+        }),
+        catchError(ipError => {
+          this.logger.error(`ERROR INLINE PAYMENT => ${ipError.data}`);
+          return ipError.data;
+        }),
     );
   }
+
   public cardPayment(transDto: CardPaymentDto): Observable<AxiosResponse<CardPaymentDto>> {
     const {
-      description,
+      merchantId,
       amount,
-      transType,
-      channel
+      pan,
+      cardHolderName,
+      customerEmail,
+      currency,
+      expYear,
+      expMonth,
+      cvv,
+      primaryCallbackUrl
     } = transDto;
 
     const cpParams: any = {
-      "processing_code": "000000",
-      "r-switch": "VIS",
-      "transaction_id": "000000000000",
-      "merchant_id": "Your merchant ID",
-      "pan": "4310000000000000",
-      "3d_url_response": "your_redirect_url",
-      "exp_month": "05",
-      "exp_year": "21",
-      "cvv": "000",
-      "desc": "Card Payment Test",
-      "amount": "000000000100",
-      "currency": "GHS",
-      "card_holder": "Card Holder Name",
-      "customer_email": "Customer Email"
+      processing_code: "000000",
+      'r-switch': "VIS",
+      transaction_id: psRandomGeneratedNumber() || '',
+      merchant_id: merchantId || '',
+      pan: pan || "4310000000000000",
+      exp_month: expMonth || "05",
+      exp_year: expYear || "21",
+      cvv: cvv || "000",
+      desc: "Card Payment Test",
+      amount: amount || '000000000100',
+      currency: currency || 'GHS',
+      card_holder: cardHolderName || "Card Holder Name",
+      customer_email: customerEmail || "Customer Email",
+      '3d_url_response': primaryCallbackUrl || "",
     };
 
     const base64_encode = generateMerchantKey();
@@ -110,6 +131,7 @@ export class PscardpaymentService {
         rejectUnauthorized: false,
       }),
     };
+
     this.logger.log(`CARD PAYMENT payload config == ${JSON.stringify(configs)}`);
     return this.httpService.post(configs.url, configs.body, { httpsAgent: configs.agent, headers: configs.headers }).pipe(
       map((tmRes) => {
