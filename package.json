@@ -1,8 +1,8 @@
 {
   "name": "lida-engine",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Payment and VAS gateway",
+  "author": "Access Wealth",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

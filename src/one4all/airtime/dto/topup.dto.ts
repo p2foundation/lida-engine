@@ -4,7 +4,7 @@ export class TopupDto {
     amount: number;
     charge?: string;
     channel?: number;
-    network: number;
+    network?: number;
     clientReference?: string;
     transType?: string;
     customerName?: string;

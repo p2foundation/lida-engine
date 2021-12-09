@@ -5,26 +5,19 @@ import { MobilemoneyService } from './mobilemoney.service';
 
 @Controller('mobilemoney')
 export class MobilemoneyController {
-    private logger = new Logger('MobilemoneyController');
+  private logger = new Logger('MobilemoneyController');
 
-    constructor(
-        private mobilemoneyService: MobilemoneyService
-    ){ }
+  constructor(private mobilemoneyService: MobilemoneyService) {}
 
-    @Post('send')
-    public async creditWallet(
-        @Body() transDto: SendMoneyDto
-    ){
-        const cw = await this.mobilemoneyService.sendMobileMoney(transDto);
-        return cw;
-    }
+  @Post('send')
+  public async creditWallet(@Body() transDto: SendMoneyDto) {
+    const cw = await this.mobilemoneyService.sendMobileMoney(transDto);
+    return cw;
+  }
 
-    @Post('receive')
-    public async debitWallet(
-        @Body() transDto: ReceiveMoneyDto
-    ): Promise<any>{
-        const dw = await this.mobilemoneyService.receiveMobileMoney(transDto);
-        return dw;
-    }
-    
+  @Post('receive')
+  public async debitWallet(@Body() transDto: ReceiveMoneyDto): Promise<any> {
+    const dw = await this.mobilemoneyService.receiveMobileMoney(transDto);
+    return dw;
+  }
 }

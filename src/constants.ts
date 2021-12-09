@@ -2,7 +2,7 @@ export const SERVER_ORIGIN = 'http://lidagate-env.eba-i9mqd3un.us-east-2.elastic
 export const SERVER_PORT = '3000';
 export const MONGO_CONNECTION = 'mongodb+srv://nestjs-admin:BSFGkUY7T0XcJfpI@cluster0-4r2ye.mongodb.net/nestjs-course?retryWrites=true&w=majority';
 export const JWT_SECRET = "vp9eb22K5Sz4";
-export const RESPONSE_URL = 'https://lidapp-ten.vercel.app/receipt';
+export const RESPONSE_URL = 'http://lidapp.s3-website.us-east-2.amazonaws.com/receipt';
 export const ONE4ALL_BASEURL = 'https://tppgh.myone4all.com/api';
 export const ONE4ALL_APIKEY = 'd75ee5a01bac11eca2b1ebf2869d5116';
 export const ONE4ALL_APISECRET = '59jKNaflSu';
