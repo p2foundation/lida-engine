@@ -9,7 +9,7 @@ import { generateMerchantKey } from 'src/utilities/utils';
 import {
   PAYSWITCH_APIKEY_PROD,
   PAYSWITCH_TEST_BASEURL,
-  PAYSWTICH_LIVE_BASEURL,
+  PAYSWITCH_CHECKOUT_URL,
   PAYSWITCH_USERNAME_PROD,
   PAYSWITCH_MERCHANTID,
   RESPONSE_URL,
@@ -67,7 +67,7 @@ export class PscardpaymentService {
     };
 
     const configs = {
-      url: PAYSWTICH_LIVE_BASEURL + '/checkout/initiate',
+      url: PAYSWITCH_CHECKOUT_URL + '/initiate',
       body: ipParams,
       auth: {
         username: `${PAYSWITCH_USERNAME_PROD}`,

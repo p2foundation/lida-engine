@@ -1,8 +1,8 @@
 {
   "name": "lida-engine",
-  "version": "0.0.1",
-  "description": "Payment and VAS gateway",
-  "author": "Access Wealth",
+  "version": "0.0.2",
+  "description": "LiDa Live online airtime topup, bill payments and VAS Gateway",
+  "author": "Hanson Peprah",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

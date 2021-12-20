@@ -41,7 +41,7 @@ export class MobilemoneyService {
   sendMobileMoney(
     transDto: SendMoneyDto,
   ): Observable<AxiosResponse<SendMoneyDto>> {
-    const { clientReference, customerMsisdn, amount } = transDto;
+    const { customerMsisdn, amount } = transDto;
 
     const rm2Params = {
       recipient: customerMsisdn || '',

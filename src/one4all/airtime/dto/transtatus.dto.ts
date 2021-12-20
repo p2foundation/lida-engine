@@ -1,5 +1,4 @@
 export class TransStatusDto {
-    transReference: string;
-    transId?: string;
+  transReference: string;
+  transId?: string;
 }
-  

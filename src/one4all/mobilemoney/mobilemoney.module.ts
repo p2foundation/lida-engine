@@ -6,6 +6,6 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [HttpModule],
   providers: [MobilemoneyService],
-  controllers: [MobilemoneyController]
+  controllers: [MobilemoneyController],
 })
 export class MobilemoneyModule {}
