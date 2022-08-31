@@ -3,7 +3,7 @@ import { AirtimeService } from './airtime.service';
 import { TopupDto } from './dto/topup.dto';
 import { TransStatusDto } from './dto/transtatus.dto';
 
-@Controller('airtime')
+@Controller('api/airtime')
 export class AirtimeController {
   private logger = new Logger('AirtimeController');
 

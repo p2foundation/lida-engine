@@ -10,6 +10,9 @@ import { MobilemoneyModule } from './one4all/mobilemoney/mobilemoney.module';
 import { PsmobilemoneyModule } from './payswitch/psmobilemoney/psmobilemoney.module';
 import { PscardpaymentModule } from './payswitch/pscardpayment/pscardpayment.module';
 import { BillpaymentsModule } from './one4all/billpayments/billpayments.module';
+import { UssdModule } from './ussd/ussd.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MONGODB_URI } from './constants';
 
 @Module({
   imports: [
@@ -22,6 +25,8 @@ import { BillpaymentsModule } from './one4all/billpayments/billpayments.module';
     MobilemoneyModule,
     PsmobilemoneyModule,
     PscardpaymentModule,
+    UssdModule,
+    MongooseModule.forRoot(process.env.MONGODB_URI || MONGODB_URI),
   ],
   controllers: [AppController],
   providers: [AppService],

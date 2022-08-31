@@ -1,5 +1,5 @@
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { catchError, map } from 'rxjs/operators';
@@ -100,11 +100,12 @@ export class AirtimeService {
           );
           return taRes.data;
         }),
-        catchError((taError) => {
+        catchError((taErrorRes) => {
           this.logger.error(
-            `AIRTIME TOPUP ERROR response ---- ${JSON.stringify(taError.data)}`,
+            `AIRTIME TOPUP ERROR response ---- ${JSON.stringify(taErrorRes.response.data)}`,
           );
-          return taError.data;
+          const taErrorMessage = taErrorRes.response.data;
+          throw new NotFoundException(taErrorMessage);        
         }),
       );
   }

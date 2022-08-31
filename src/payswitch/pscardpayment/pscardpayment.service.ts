@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import * as https from 'https';
 import { HttpService } from '@nestjs/axios';
 import { CardPaymentDto } from './dto/card.payments.dto';
-import { generateMerchantKey } from 'src/utilities/utils';
+import { generateMerchantKey, generateTransactionId } from 'src/utilities/utils';
 import {
   PAYSWITCH_APIKEY_PROD,
   PAYSWITCH_TEST_BASEURL,
@@ -60,7 +60,7 @@ export class PscardpaymentService {
 
     const ipParams: any = {
       merchant_id: PAYSWITCH_MERCHANTID,
-      transaction_id: psRandomGeneratedNumber() || transId,
+      transaction_id: generateTransactionId() || transId,
       desc: description,
       amount,
       redirect_url: redirectURL || RESPONSE_URL,
@@ -68,7 +68,7 @@ export class PscardpaymentService {
     };
 
     const configs = {
-      url: PAYSWTICH_PROD_BASEURL + '/checkout/initiate',
+      url: PAYSWITCH_CHECKOUT_URL + '/initiate',
       body: ipParams,
       auth: {
         username: `${PAYSWITCH_USERNAME_PROD}`,

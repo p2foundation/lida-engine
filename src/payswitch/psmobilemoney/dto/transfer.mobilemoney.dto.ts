@@ -16,4 +16,6 @@ export class TransferMobileMoneyDto {
     serviceTransId?: string;
     paymentStatus?: string;
     otherInfo?: string;
+    processingCode:  any;
+
 }
