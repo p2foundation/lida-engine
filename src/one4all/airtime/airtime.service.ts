@@ -52,13 +52,15 @@ export class AirtimeService {
           );
           return tsRes.data;
         }),
-        catchError((tsError) => {
+        catchError((tsErrorRes) => {
           this.logger.error(
             `Query TRANSACTION STATUS ERROR response ---- ${JSON.stringify(
-              tsError.data,
+              tsErrorRes.response.data,
             )}`,
           );
-          return tsError.data;
+       
+          const tsErrorResMessage = tsErrorRes.response.data;
+          throw new NotFoundException(tsErrorResMessage);   
         }),
       );
   }
